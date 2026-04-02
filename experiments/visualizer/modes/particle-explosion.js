@@ -98,7 +98,7 @@ export function createParticleExplosion() {
       beatPulse *= 0.93;
 
       // Ambient rockets on sustained energy
-      if (overall > 0.2 && Math.random() < overall * 0.02) {
+      if (overall > 0.08 && Math.random() < overall * 0.06) {
         spawnRocket(width, height, overall * 0.6);
       }
 

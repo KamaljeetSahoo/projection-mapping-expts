@@ -9,8 +9,8 @@ export function createAudio() {
   let beatEnergy = 0;
   let beatAvg = 0;
   let beatDecay = 0;
-  const BEAT_THRESHOLD = 1.4;
-  const BEAT_DECAY_RATE = 0.92;
+  const BEAT_THRESHOLD = 1.15;
+  const BEAT_DECAY_RATE = 0.85;
 
   async function init() {
     audioCtx = new AudioContext();
@@ -65,7 +65,7 @@ export function createAudio() {
       return false;
     }
 
-    if (bass > beatAvg * BEAT_THRESHOLD && bass > 0.15) {
+    if (bass > beatAvg * BEAT_THRESHOLD && bass > 0.05) {
       beatDecay = 1;
       beatAvg = beatAvg * 0.7 + bass * 0.3;
       return true;
