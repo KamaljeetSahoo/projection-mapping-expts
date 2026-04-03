@@ -12,6 +12,7 @@ export default defineConfig(({ command }) => ({
         visualizer: resolve(__dirname, 'experiments/visualizer/index.html'),
         dashboard: resolve(__dirname, 'experiments/dashboard/index.html'),
         geometry: resolve(__dirname, 'experiments/geometry/index.html'),
+        motion: resolve(__dirname, 'experiments/motion/index.html'),
       },
     },
   },
