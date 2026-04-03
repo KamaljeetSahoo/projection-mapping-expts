@@ -39,8 +39,8 @@ export function createCubeGrid() {
 
       const cx = width / 2;
       const cy = height / 2;
-      const size = Math.min(width, height) * 0.28;
-      const fov = 600;
+      const size = Math.min(width, height) * 0.18;
+      const fov = 800;
 
       const rotY = time;
       const rotX = Math.sin(time * 0.7) * 0.3;

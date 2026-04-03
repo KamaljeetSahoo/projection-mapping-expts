@@ -1,8 +1,8 @@
 import { defineConfig } from 'vite';
 import { resolve } from 'path';
 
-export default defineConfig({
-  base: '/projection-mapping-expts/',
+export default defineConfig(({ command }) => ({
+  base: command === 'build' ? '/projection-mapping-expts/' : '/',
   root: '.',
   build: {
     rollupOptions: {
@@ -19,4 +19,4 @@ export default defineConfig({
     port: 3000,
     open: true,
   },
-});
+}));
