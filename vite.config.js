@@ -14,6 +14,7 @@ export default defineConfig(({ command }) => ({
         geometry: resolve(__dirname, 'experiments/geometry/index.html'),
         motion: resolve(__dirname, 'experiments/motion/index.html'),
         immersive: resolve(__dirname, 'experiments/immersive/index.html'),
+        mapper: resolve(__dirname, 'experiments/mapper/index.html'),
       },
     },
   },
