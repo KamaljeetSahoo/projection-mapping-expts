@@ -410,6 +410,9 @@ function updateEmptyHint() {
 
 // ---------- Long-press context menu ----------
 let ctxMenu = null;
+function onOutsidePointerDown(e) {
+  if (ctxMenu && !ctxMenu.contains(e.target)) closeContextMenu();
+}
 function showContextMenu(id, x, y) {
   closeContextMenu();
   ctxMenu = document.createElement('div');
@@ -445,15 +448,17 @@ function showContextMenu(id, x, y) {
     }
     closeContextMenu();
   });
+  // Defer until after the long-press pointer event chain finishes so we
+  // don't immediately match and close this very menu.
   setTimeout(() => {
-    window.addEventListener('pointerdown', closeContextMenu, { once: true });
+    window.addEventListener('pointerdown', onOutsidePointerDown);
   }, 0);
 }
 function closeContextMenu() {
-  if (ctxMenu) {
-    ctxMenu.remove();
-    ctxMenu = null;
-  }
+  if (!ctxMenu) return;
+  window.removeEventListener('pointerdown', onOutsidePointerDown);
+  ctxMenu.remove();
+  ctxMenu = null;
 }
 
 // ---------- Init ----------
