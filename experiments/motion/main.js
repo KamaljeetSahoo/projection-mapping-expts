@@ -3,6 +3,7 @@ import { createMotionDetector } from './utils/motion-detect.js';
 import { createRipples } from './modes/ripples.js';
 import { createTrails } from './modes/trails.js';
 import { createRepel } from './modes/repel.js';
+import { attachMobileControls } from '../_shared/mobile-controls.js';
 
 const canvasEl = document.getElementById('canvas');
 const startOverlay = document.getElementById('start-overlay');
@@ -110,6 +111,13 @@ startBtn.addEventListener('click', async () => {
     currentMode.init(canvas);
     showModeLabel(currentMode.name);
     resetCursorHide();
+    attachMobileControls({
+      onNext: () => switchMode((currentModeIndex + 1) % modes.length),
+      onHelp: () => {
+        helpVisible = !helpVisible;
+        helpOverlay.classList.toggle('visible', helpVisible);
+      },
+    });
     requestAnimationFrame(loop);
   } catch (err) {
     errorMsg.style.display = 'block';
