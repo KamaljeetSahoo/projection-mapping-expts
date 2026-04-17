@@ -18,6 +18,7 @@ export default defineConfig(({ command }) => {
           motion: resolve(__dirname, 'experiments/motion/index.html'),
           immersive: resolve(__dirname, 'experiments/immersive/index.html'),
           mapper: resolve(__dirname, 'experiments/mapper/index.html'),
+          go: resolve(__dirname, 'experiments/go/index.html'),
         },
       },
     },
