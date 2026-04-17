@@ -4,6 +4,7 @@ import { initCalendar } from './widgets/calendar.js';
 import { initSystemStats } from './widgets/system-stats.js';
 import { initNowPlaying } from './widgets/now-playing.js';
 import { initQuote } from './widgets/quote.js';
+import { attachMobileControls } from '../_shared/mobile-controls.js';
 
 // Initialize all widgets
 const clock = initClock();
@@ -57,3 +58,13 @@ function resetCursorHide() {
 }
 document.addEventListener('mousemove', resetCursorHide);
 resetCursorHide();
+
+attachMobileControls({
+  onHelp: () => {
+    helpVisible = !helpVisible;
+    helpOverlay.classList.toggle('visible', helpVisible);
+  },
+  extraButtons: [
+    { id: 'clock-format', label: '12/24h', onClick: () => clock.toggle24h() },
+  ],
+});

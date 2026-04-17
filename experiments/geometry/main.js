@@ -4,6 +4,7 @@ import { createFloatingPanels } from './modes/floating-panels.js';
 import { createTunnel } from './modes/tunnel.js';
 import { createArchitecture } from './modes/architecture.js';
 import { createShattered } from './modes/shattered.js';
+import { attachMobileControls } from '../_shared/mobile-controls.js';
 
 const canvasEl = document.getElementById('canvas');
 const helpOverlay = document.getElementById('help-overlay');
@@ -112,6 +113,14 @@ function resetCursorHide() {
 }
 document.addEventListener('mousemove', resetCursorHide);
 resetCursorHide();
+
+attachMobileControls({
+  onNext: () => switchMode((currentModeIndex + 1) % modes.length),
+  onHelp: () => {
+    helpVisible = !helpVisible;
+    helpOverlay.classList.toggle('visible', helpVisible);
+  },
+});
 
 currentMode = modes[0]();
 currentMode.init(canvas);

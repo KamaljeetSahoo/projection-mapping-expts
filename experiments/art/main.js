@@ -2,6 +2,7 @@ import { setupCanvas } from './utils/canvas.js';
 import { createFlowField } from './modes/flow-field.js';
 import { createFractals } from './modes/fractals.js';
 import { createColorBlobs } from './modes/color-blobs.js';
+import { attachMobileControls } from '../_shared/mobile-controls.js';
 
 const canvasEl = document.getElementById('canvas');
 const helpOverlay = document.getElementById('help-overlay');
@@ -122,6 +123,14 @@ function resetCursorHide() {
 }
 document.addEventListener('mousemove', resetCursorHide);
 resetCursorHide();
+
+attachMobileControls({
+  onNext: () => switchMode((currentModeIndex + 1) % modes.length),
+  onHelp: () => {
+    helpVisible = !helpVisible;
+    helpOverlay.classList.toggle('visible', helpVisible);
+  },
+});
 
 // Start
 currentMode = modes[0]();
