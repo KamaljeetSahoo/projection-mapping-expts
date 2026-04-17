@@ -3,6 +3,9 @@ import { createUnderwater } from './modes/underwater.js';
 import { createSpace } from './modes/space.js';
 import { createForest } from './modes/forest.js';
 import { attachMobileControls } from '../_shared/mobile-controls.js';
+import { setupAutoUpdate } from '../_shared/pwa.js';
+
+setupAutoUpdate();
 
 const canvasEl = document.getElementById('canvas');
 const helpOverlay = document.getElementById('help-overlay');

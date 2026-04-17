@@ -4,6 +4,9 @@ import { createRipples } from './modes/ripples.js';
 import { createTrails } from './modes/trails.js';
 import { createRepel } from './modes/repel.js';
 import { attachMobileControls } from '../_shared/mobile-controls.js';
+import { setupAutoUpdate } from '../_shared/pwa.js';
+
+setupAutoUpdate();
 
 const canvasEl = document.getElementById('canvas');
 const startOverlay = document.getElementById('start-overlay');
@@ -99,6 +102,10 @@ function resetCursorHide() {
   cursorTimeout = setTimeout(() => { document.body.style.cursor = 'none'; }, 2000);
 }
 document.addEventListener('mousemove', resetCursorHide);
+
+document.getElementById('start-home').addEventListener('click', () => {
+  window.location.href = (import.meta.env && import.meta.env.BASE_URL) || '/';
+});
 
 startBtn.addEventListener('click', async () => {
   try {
