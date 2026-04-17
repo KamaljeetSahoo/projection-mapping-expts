@@ -110,6 +110,20 @@ function tracePath(ctx, type, r) {
   }
 }
 
+// Max distance from shape center to its farthest point, in units of r.
+// Used to size radial gradients so they reach corners (square, triangle, blob).
+function maxRadiusFactor(type) {
+  switch (type) {
+    case 'square':   return Math.SQRT2;   // ~1.414
+    case 'triangle': return 1.16;         // vertex distance
+    case 'blob':     return 1.22;         // see tracePath blob modulation
+    case 'star':     return 1.0;          // outer points at r
+    case 'line':     return 1.0;
+    case 'circle':
+    default:         return 1.0;
+  }
+}
+
 function applyFill(ctx, shape, r, liveOpacity) {
   const col = shape.color;
   ctx.globalAlpha = liveOpacity;
@@ -119,9 +133,12 @@ function applyFill(ctx, shape, r, liveOpacity) {
     g.addColorStop(1, shiftHue(col, 60));
     ctx.fillStyle = g;
   } else if (shape.fill === 'glow') {
-    const g = ctx.createRadialGradient(0, 0, 0, 0, 0, r * 1.2);
+    // Gradient radius must reach the farthest point of the shape so corners
+    // don't go transparent on squares/triangles.
+    const gr = r * maxRadiusFactor(shape.type) * 1.02;
+    const g = ctx.createRadialGradient(0, 0, 0, 0, 0, gr);
     g.addColorStop(0, col);
-    g.addColorStop(0.55, hexWithAlpha(col, 0.55));
+    g.addColorStop(0.55, hexWithAlpha(col, 0.6));
     g.addColorStop(1, hexWithAlpha(col, 0));
     ctx.fillStyle = g;
   } else {

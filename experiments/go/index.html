@@ -147,13 +147,6 @@
     body.go-play #play-hint.show { opacity: 1; }
 
     /* --- Selection bottom sheet --- */
-    .go-sheet-scrim {
-      position: fixed; inset: 0;
-      background: transparent;
-      z-index: 20;
-      pointer-events: none;
-    }
-    .go-sheet-scrim.open { pointer-events: auto; }
     .go-sheet {
       position: fixed;
       left: 0; right: 0;
@@ -169,12 +162,13 @@
       -webkit-backdrop-filter: blur(24px);
       box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.5);
       z-index: 21;
-      transform: translateY(100%);
+      transform: translateY(calc(100% + 20px));
       transition: transform 0.32s cubic-bezier(0.2, 0.9, 0.3, 1);
-      max-height: 72vh;
+      max-height: 68vh;
       overflow-y: auto;
+      pointer-events: none;
     }
-    .go-sheet.open { transform: translateY(0); }
+    .go-sheet.open { transform: translateY(0); pointer-events: auto; }
     .go-sheet-handle {
       width: 40px; height: 4px;
       background: rgba(255, 255, 255, 0.18);
@@ -367,9 +361,8 @@
     <div class="go-palette" id="palette"></div>
   </div>
 
-  <!-- Selection bottom sheet -->
-  <div class="go-sheet-scrim" id="sheet-scrim"></div>
-  <div class="go-sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Shape properties">
+  <!-- Selection bottom sheet (no scrim — canvas stays tappable) -->
+  <div class="go-sheet" id="sheet" role="dialog" aria-modal="false" aria-label="Shape properties">
     <div class="go-sheet-handle"></div>
 
     <h4>Color</h4>
