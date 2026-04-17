@@ -349,6 +349,82 @@
       z-index: 5;
     }
     #help-overlay.visible { opacity: 1; }
+
+    /* ------- Landscape phones & small tablets ------- */
+    @media (max-width: 900px) {
+      .dashboard { gap: 12px; padding: 14px; }
+      .widget { padding: 14px; border-radius: 12px; }
+      .widget-label { font-size: 0.8rem; margin-bottom: 8px; }
+      .clock-analog { width: min(200px, 30vh); height: min(200px, 30vh); }
+      .clock-digital { font-size: clamp(1.6rem, 4.5vw, 2.4rem); margin-top: 10px; }
+      .clock-seconds { font-size: 1rem; }
+      .clock-ampm { font-size: 0.9rem; }
+      .weather-temp { font-size: clamp(1.8rem, 6vw, 2.6rem); }
+      .weather-icon { font-size: 2.4rem; }
+      .weather-temp-unit { font-size: 1.1rem; }
+      .weather-desc { font-size: 0.95rem; }
+      .weather-details { font-size: 0.8rem; gap: 10px; margin-bottom: 10px; }
+      .weather-forecast { gap: 8px; }
+      .forecast-day { padding: 6px 3px; }
+      .forecast-day .day-name { font-size: 0.7rem; }
+      .forecast-day .day-icon { font-size: 1rem; }
+      .forecast-day .day-temp { font-size: 0.85rem; }
+      .forecast-day .day-low { font-size: 0.75rem; }
+      .calendar-date-large { font-size: 1.3rem; }
+      .calendar-year { font-size: 0.95rem; margin-bottom: 10px; }
+      .calendar-grid .cal-header { font-size: 0.7rem; padding: 2px 0; }
+      .calendar-grid .cal-day { font-size: 0.8rem; padding: 4px 0; }
+      .stat-ring { width: 46px; height: 46px; }
+      .stat-ring .ring-label { font-size: 0.7rem; }
+      .stat-info .stat-name { font-size: 0.8rem; }
+      .stat-info .stat-value { font-size: 0.9rem; }
+      .stats-grid { gap: 10px; }
+      .np-art { width: 52px; height: 52px; font-size: 1.4rem; }
+      .np-title { font-size: 1rem; }
+      .np-artist { font-size: 0.85rem; }
+      .np-idle { font-size: 0.85rem; }
+      .quote-text { font-size: 1rem; line-height: 1.55; }
+      .quote-author { font-size: 0.85rem; }
+    }
+
+    /* ------- Portrait phones: stack into a single column ------- */
+    @media (max-width: 600px) {
+      html, body { overflow-y: auto; overflow-x: hidden; overscroll-behavior-y: contain; }
+      .dashboard {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: auto;
+        min-height: 100dvh;
+        padding:
+          max(14px, env(safe-area-inset-top))
+          14px
+          calc(84px + env(safe-area-inset-bottom));
+        gap: 10px;
+      }
+      .widget { width: 100%; min-height: 0; }
+      .center-spacer { display: none; }
+      /* Logical reading order on phone */
+      .clock-widget     { order: 1; }
+      .weather-widget   { order: 2; }
+      .calendar-widget  { order: 3; }
+      .stats-widget     { order: 4; }
+      .nowplaying-widget{ order: 5; }
+      .quote-widget     { order: 6; }
+
+      .clock-analog { width: min(190px, 50vw); height: min(190px, 50vw); }
+      .clock-digital { font-size: clamp(1.8rem, 9vw, 2.4rem); margin-top: 10px; }
+      .clock-seconds { font-size: 1rem; }
+      .weather-current { margin-bottom: 10px; gap: 12px; }
+      .weather-forecast { gap: 6px; }
+      .calendar-grid .cal-day { padding: 6px 0; font-size: 0.85rem; }
+      .calendar-grid .cal-header { font-size: 0.72rem; }
+      .stats-grid { flex-direction: row; flex-wrap: wrap; gap: 12px; justify-content: flex-start; }
+      .stat-item { flex: 1 1 45%; min-width: 140px; }
+      .quote-text { font-size: 0.95rem; line-height: 1.6; }
+      .quote-widget { padding: 18px; }
+      #help-overlay { display: none; }
+    }
   </style>
 </head>
 <body>
