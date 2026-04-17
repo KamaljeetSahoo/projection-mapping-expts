@@ -246,7 +246,6 @@ function deleteShape(id) {
 
 // ---------- UI: Bottom sheet ----------
 const sheet = document.getElementById('sheet');
-const sheetScrim = document.getElementById('sheet-scrim');
 const swatchesEl = document.getElementById('swatches');
 const fillPillsEl = document.getElementById('fill-pills');
 const animPillsEl = document.getElementById('anim-pills');
@@ -301,18 +300,12 @@ opacitySlider.addEventListener('input', (e) => setProp('opacity', parseFloat(e.t
 btnDup.addEventListener('click', () => state.selectedId && duplicateShape(state.selectedId));
 btnDelete.addEventListener('click', () => state.selectedId && deleteShape(state.selectedId));
 
-let sheetOpen = false;
 function openSheet() {
   sheet.classList.add('open');
-  sheetScrim.classList.add('open');
-  sheetOpen = true;
 }
 function closeSheet() {
   sheet.classList.remove('open');
-  sheetScrim.classList.remove('open');
-  sheetOpen = false;
 }
-sheetScrim.addEventListener('click', () => selectById(null));
 
 // Swipe-down to dismiss
 (() => {
