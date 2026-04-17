@@ -3,6 +3,9 @@ import { createFlowField } from './modes/flow-field.js';
 import { createFractals } from './modes/fractals.js';
 import { createColorBlobs } from './modes/color-blobs.js';
 import { attachMobileControls } from '../_shared/mobile-controls.js';
+import { setupAutoUpdate } from '../_shared/pwa.js';
+
+setupAutoUpdate();
 
 const canvasEl = document.getElementById('canvas');
 const helpOverlay = document.getElementById('help-overlay');

@@ -5,6 +5,9 @@ import { initSystemStats } from './widgets/system-stats.js';
 import { initNowPlaying } from './widgets/now-playing.js';
 import { initQuote } from './widgets/quote.js';
 import { attachMobileControls } from '../_shared/mobile-controls.js';
+import { setupAutoUpdate } from '../_shared/pwa.js';
+
+setupAutoUpdate();
 
 // Initialize all widgets
 const clock = initClock();

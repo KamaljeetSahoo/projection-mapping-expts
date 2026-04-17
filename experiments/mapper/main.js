@@ -1,6 +1,9 @@
 import { renderShapes, hitTestShape } from './renderer/shape-renderer.js';
 import { saveProject, loadProject } from './storage/db.js';
 import { exportProject, importProject } from './storage/export.js';
+import { setupAutoUpdate } from '../_shared/pwa.js';
+
+setupAutoUpdate();
 
 const canvasEl = document.getElementById('canvas');
 const ctx = canvasEl.getContext('2d');
@@ -219,6 +222,10 @@ document.getElementById('btn-import').addEventListener('click', async () => {
   } catch (e) { status.textContent = 'Import failed'; }
 });
 document.getElementById('btn-undo').addEventListener('click', undo);
+document.getElementById('btn-home').addEventListener('click', () => {
+  const home = (import.meta.env && import.meta.env.BASE_URL) || '/';
+  window.location.href = home;
+});
 
 // --- Properties panel ---
 function updatePropsPanel() {

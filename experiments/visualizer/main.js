@@ -13,6 +13,9 @@ import { createEqualizerGrid } from './modes/equalizer-grid.js';
 import { createLiquidWave } from './modes/liquid-wave.js';
 import { createAurora } from './modes/aurora.js';
 import { attachMobileControls } from '../_shared/mobile-controls.js';
+import { setupAutoUpdate } from '../_shared/pwa.js';
+
+setupAutoUpdate();
 
 const canvasEl = document.getElementById('canvas');
 const startOverlay = document.getElementById('start-overlay');
@@ -158,6 +161,11 @@ function resetCursorHide() {
   }, 2000);
 }
 document.addEventListener('mousemove', resetCursorHide);
+
+// Back to home (visible even if permission denied)
+document.getElementById('start-home').addEventListener('click', () => {
+  window.location.href = (import.meta.env && import.meta.env.BASE_URL) || '/';
+});
 
 // Start button
 startBtn.addEventListener('click', async () => {

@@ -71,7 +71,8 @@ function toggleFullscreen() {
  * @param {() => void} [opts.onNext]    Next mode handler (shows a ▶ button)
  * @param {() => void} [opts.onHelp]    Toggle help handler (shows a ? button)
  * @param {boolean} [opts.fullscreen=true]  Show fullscreen toggle
- * @param {Array<{id:string,label:string,onClick:()=>void}>} [opts.extraButtons]
+ * @param {boolean} [opts.back=true]    Show a home button that returns to the landing page
+ * @param {Array<{id:string,label:string,icon?:string,onClick:()=>void}>} [opts.extraButtons]
  * @returns {{ show: () => void, destroy: () => void, tray: HTMLElement }}
  */
 export function attachMobileControls(opts = {}) {
@@ -81,6 +82,7 @@ export function attachMobileControls(opts = {}) {
     onNext,
     onHelp,
     fullscreen = true,
+    back = true,
     extraButtons = [],
   } = opts;
 
@@ -88,6 +90,17 @@ export function attachMobileControls(opts = {}) {
   tray.className = 'mc-tray';
 
   const buttons = [];
+  if (back) {
+    buttons.push({
+      id: '__back',
+      label: 'Home',
+      icon: '⌂',
+      onClick: () => {
+        const home = (import.meta.env && import.meta.env.BASE_URL) || '/';
+        window.location.href = home;
+      },
+    });
+  }
   if (onNext) buttons.push({ id: '__next', label: 'Next', icon: '▶', onClick: onNext });
   for (const b of extraButtons) buttons.push({ ...b });
   if (onHelp || fullscreen) buttons.push({ id: '__sep', sep: true });

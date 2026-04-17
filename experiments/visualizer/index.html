@@ -2,7 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0a0a0a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Projection Lab" />
+  <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon-180x180.png" />
   <title>Music-Reactive Visualizer</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -55,6 +62,17 @@
       background: rgba(255, 255, 255, 0.08);
       border-color: rgba(255, 255, 255, 0.5);
     }
+    #start-home {
+      margin-top: 1.2rem;
+      font-family: 'SF Mono', monospace;
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.4);
+      background: transparent; border: none; cursor: pointer;
+      text-decoration: underline;
+      padding: 8px 12px;
+      touch-action: manipulation;
+    }
+    #start-home:hover { color: rgba(255, 255, 255, 0.7); }
     #error-msg {
       font-family: 'SF Mono', monospace;
       font-size: 0.75rem;
@@ -105,6 +123,7 @@
     <p>Microphone access required to capture room audio</p>
     <button id="start-btn">Start Listening</button>
     <div id="error-msg"></div>
+    <button id="start-home" type="button">← Back to home</button>
   </div>
   <canvas id="canvas"></canvas>
   <div id="help-overlay">

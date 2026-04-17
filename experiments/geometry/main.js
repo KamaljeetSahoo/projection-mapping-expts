@@ -5,6 +5,9 @@ import { createTunnel } from './modes/tunnel.js';
 import { createArchitecture } from './modes/architecture.js';
 import { createShattered } from './modes/shattered.js';
 import { attachMobileControls } from '../_shared/mobile-controls.js';
+import { setupAutoUpdate } from '../_shared/pwa.js';
+
+setupAutoUpdate();
 
 const canvasEl = document.getElementById('canvas');
 const helpOverlay = document.getElementById('help-overlay');
