@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <meta name="theme-color" content="#0a0a0a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Mapper Go" />
+  <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon-180x180.png" />
+  <title>Projection Mapper Go</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body {
+      width: 100%; height: 100%;
+      overflow: hidden;
+      background: #000;
+      font-family: 'Inter', system-ui, sans-serif;
+      color: rgba(255, 255, 255, 0.9);
+      overscroll-behavior: none;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    canvas {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      display: block;
+      touch-action: none;
+      background: #000;
+    }
+
+    #ui { position: absolute; inset: 0; pointer-events: none; z-index: 10; }
+    #ui > * { pointer-events: auto; }
+    body.go-play #ui { opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
+    body.go-play #ui.go-play-hint { opacity: 1; }
+
+    /* --- Top toolbar --- */
+    .go-top {
+      position: absolute;
+      top: max(12px, env(safe-area-inset-top));
+      left: 50%; transform: translateX(-50%);
+      display: flex; align-items: center; gap: 4px;
+      padding: 5px;
+      background: rgba(20, 22, 28, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+    .go-btn {
+      min-width: 44px; height: 44px;
+      padding: 0 12px;
+      background: transparent;
+      border: none;
+      color: rgba(255, 255, 255, 0.72);
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 500;
+      border-radius: 10px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      touch-action: manipulation;
+      transition: background 0.15s ease, color 0.15s ease, transform 0.1s ease;
+    }
+    .go-btn:active { background: rgba(255, 255, 255, 0.14); color: #fff; transform: scale(0.94); }
+    .go-btn[disabled] { opacity: 0.35; pointer-events: none; }
+    .go-sep { width: 1px; align-self: stretch; background: rgba(255,255,255,0.1); margin: 4px 2px; }
+
+    /* --- Bottom palette --- */
+    .go-palette {
+      position: absolute;
+      left: 0; right: 0;
+      bottom: max(12px, env(safe-area-inset-bottom));
+      margin: 0 auto;
+      width: max-content;
+      max-width: calc(100vw - 16px);
+      display: flex;
+      gap: 6px;
+      padding: 8px;
+      background: rgba(20, 22, 28, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 18px;
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .go-palette::-webkit-scrollbar { display: none; }
+    .go-shape-btn {
+      width: 54px; height: 54px;
+      flex-shrink: 0;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255, 255, 255, 0.78);
+      touch-action: manipulation;
+      transition: transform 0.1s ease, background 0.15s ease;
+    }
+    .go-shape-btn:active { transform: scale(0.92); background: rgba(255, 255, 255, 0.12); }
+    .go-shape-btn svg { width: 28px; height: 28px; }
+
+    /* --- Play button bottom-right --- */
+    .go-play-btn {
+      position: absolute;
+      right: max(14px, env(safe-area-inset-right));
+      bottom: max(86px, calc(env(safe-area-inset-bottom) + 86px));
+      width: 56px; height: 56px;
+      background: rgba(90, 170, 255, 0.2);
+      border: 1px solid rgba(90, 170, 255, 0.35);
+      border-radius: 50%;
+      color: #9cf;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      transition: transform 0.12s ease, background 0.2s ease;
+      touch-action: manipulation;
+    }
+    .go-play-btn:active { transform: scale(0.92); }
+    .go-play-btn svg { width: 20px; height: 20px; }
+
+    /* --- Play-mode hint --- */
+    #play-hint {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.4);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    body.go-play #play-hint.show { opacity: 1; }
+
+    /* --- Selection bottom sheet --- */
+    .go-sheet-scrim {
+      position: fixed; inset: 0;
+      background: transparent;
+      z-index: 20;
+      pointer-events: none;
+    }
+    .go-sheet-scrim.open { pointer-events: auto; }
+    .go-sheet {
+      position: fixed;
+      left: 0; right: 0;
+      bottom: 0;
+      margin: 0 auto;
+      width: 100%;
+      max-width: 560px;
+      background: rgba(22, 24, 30, 0.95);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 22px 22px 0 0;
+      padding: 16px 18px max(18px, calc(env(safe-area-inset-bottom) + 12px));
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.5);
+      z-index: 21;
+      transform: translateY(100%);
+      transition: transform 0.32s cubic-bezier(0.2, 0.9, 0.3, 1);
+      max-height: 72vh;
+      overflow-y: auto;
+    }
+    .go-sheet.open { transform: translateY(0); }
+    .go-sheet-handle {
+      width: 40px; height: 4px;
+      background: rgba(255, 255, 255, 0.18);
+      border-radius: 2px;
+      margin: 2px auto 12px;
+    }
+
+    .go-sheet h4 {
+      font-size: 10.5px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: rgba(255, 255, 255, 0.4);
+      margin: 10px 0 8px;
+    }
+    .go-swatches {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 6px;
+    }
+    .go-swatch {
+      aspect-ratio: 1;
+      border-radius: 8px;
+      border: 2px solid transparent;
+      cursor: pointer;
+      touch-action: manipulation;
+      position: relative;
+    }
+    .go-swatch.active { border-color: #fff; transform: scale(1.08); }
+    .go-swatch.picker {
+      background: conic-gradient(#f44, #fa3, #fd3, #4d4, #4bf, #84f, #f4a, #f44);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #000;
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .go-swatch.picker input {
+      position: absolute; inset: 0;
+      opacity: 0; cursor: pointer;
+    }
+
+    .go-pills {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .go-pill {
+      flex: 1 1 auto;
+      min-width: 72px;
+      padding: 10px 12px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      color: rgba(255, 255, 255, 0.7);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    .go-pill.active {
+      background: rgba(90, 170, 255, 0.18);
+      border-color: rgba(90, 170, 255, 0.35);
+      color: #9cf;
+    }
+    .go-pill:active { transform: scale(0.97); }
+
+    .go-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 4px;
+    }
+    .go-row label {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.5);
+      min-width: 64px;
+    }
+    .go-row input[type="range"] {
+      flex: 1;
+      accent-color: #9cf;
+      height: 24px;
+    }
+    .go-value {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.5);
+      font-variant-numeric: tabular-nums;
+      min-width: 36px;
+      text-align: right;
+    }
+    .go-sheet-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+    }
+    .go-action {
+      flex: 1;
+      padding: 11px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.04);
+      color: rgba(255, 255, 255, 0.8);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    .go-action.danger {
+      background: rgba(255, 60, 60, 0.14);
+      border-color: rgba(255, 60, 60, 0.28);
+      color: rgba(255, 120, 120, 0.95);
+    }
+    .go-action:active { transform: scale(0.98); }
+
+    /* --- Empty-state hint --- */
+    #empty-hint {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      color: rgba(255, 255, 255, 0.35);
+      font-size: 14px;
+      line-height: 1.6;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    #empty-hint.hidden { opacity: 0; }
+    #empty-hint b { color: rgba(255, 255, 255, 0.55); font-weight: 500; }
+
+    /* --- Long-press action menu --- */
+    .go-ctx {
+      position: fixed;
+      background: rgba(24, 26, 32, 0.96);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 4px;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      z-index: 30;
+      animation: ctx-in 0.18s ease;
+    }
+    @keyframes ctx-in { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+    .go-ctx button {
+      display: block;
+      width: 100%;
+      min-width: 140px;
+      padding: 10px 14px;
+      background: transparent;
+      border: none;
+      color: rgba(255, 255, 255, 0.85);
+      font-family: inherit;
+      font-size: 13px;
+      text-align: left;
+      border-radius: 8px;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    .go-ctx button:active { background: rgba(255, 255, 255, 0.08); }
+    .go-ctx button.danger { color: #f88; }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+
+  <div id="empty-hint">
+    Tap a shape below to drop it on the canvas<br>
+    <b>Drag</b> to move · <b>pinch</b> to size · <b>twist</b> to rotate
+  </div>
+
+  <div id="play-hint">Tap to exit</div>
+
+  <div id="ui">
+    <!-- Top toolbar -->
+    <div class="go-top">
+      <button class="go-btn" id="btn-home" aria-label="Home" title="Home">⌂</button>
+      <div class="go-sep"></div>
+      <button class="go-btn" id="btn-undo" aria-label="Undo" title="Undo">↺</button>
+      <button class="go-btn" id="btn-redo" aria-label="Redo" title="Redo">↻</button>
+    </div>
+
+    <!-- Play / exit play -->
+    <button class="go-play-btn" id="btn-play" aria-label="Play projection">
+      <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M5 3 L17 10 L5 17 Z"/></svg>
+    </button>
+
+    <!-- Shape palette -->
+    <div class="go-palette" id="palette"></div>
+  </div>
+
+  <!-- Selection bottom sheet -->
+  <div class="go-sheet-scrim" id="sheet-scrim"></div>
+  <div class="go-sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Shape properties">
+    <div class="go-sheet-handle"></div>
+
+    <h4>Color</h4>
+    <div class="go-swatches" id="swatches"></div>
+
+    <h4>Fill</h4>
+    <div class="go-pills" id="fill-pills"></div>
+
+    <h4>Animation</h4>
+    <div class="go-pills" id="anim-pills"></div>
+
+    <div class="go-row" id="speed-row">
+      <label>Speed</label>
+      <input type="range" id="speed" min="0.2" max="4" step="0.1" value="1">
+      <span class="go-value" id="speed-val">1.0×</span>
+    </div>
+    <div class="go-row">
+      <label>Opacity</label>
+      <input type="range" id="opacity" min="0.1" max="1" step="0.05" value="1">
+      <span class="go-value" id="opacity-val">100%</span>
+    </div>
+
+    <div class="go-sheet-actions">
+      <button class="go-action" id="btn-dup">Duplicate</button>
+      <button class="go-action danger" id="btn-delete">Delete</button>
+    </div>
+  </div>
+
+  <script type="module" src="./main.js"></script>
+</body>
+</html>
